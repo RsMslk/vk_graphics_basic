@@ -16,15 +16,18 @@ layout(std430, binding = 1) buffer b
     float B[];
 };
 
-layout(std430, binding = 2) buffer Sum
-{
-    float sum[];
-};
-
 void main() 
 {
     uint idx = gl_GlobalInvocationID.x;
     if (idx < PushConstant.len) {
-        sum[idx] = A[idx] + B[idx];
+        float sum = 0;
+        for (int i = -3; i < 4; ++i)
+        {
+            if (idx + i >= 0 && idx + i < PushConstant.len)
+            {
+                sum += A[idx + i];
+            }
+        }
+        B[idx] = A[idx] - sum / 7;
     }
 }
