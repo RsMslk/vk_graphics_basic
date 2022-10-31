@@ -3,8 +3,10 @@
 #include <vk_pipeline.h>
 #include <vk_buffers.h>
 #include <vk_utils.h>
+
 #include <chrono>
 #include <time.h>
+#include <random>
 
 
 SimpleCompute::SimpleCompute(uint32_t a_length) : m_length(a_length)
@@ -75,7 +77,7 @@ void SimpleCompute::CreateDevice(uint32_t a_deviceId)
 
 void SimpleCompute::SetupSimplePipeline()
 {
-  std::srand(time(0));
+
   std::vector<std::pair<VkDescriptorType, uint32_t> > dtypes = {
       {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,             2}
   };
@@ -99,13 +101,20 @@ void SimpleCompute::SetupSimplePipeline()
   m_pBindings->BindEnd(&m_sumDS, &m_sumDSLayout);
 
   // Заполнение буферов
+  time_t t;
+  std::srand((unsigned) time(&t));
   std::vector<float> values(m_length);
+  m_A_C.resize(m_length);
   for (uint32_t i = 0; i < values.size(); ++i)
   {
-    values[i] = (float)(std::rand()) + 1000000.0;
+    
+    float elem = (float)(std::rand()) + 1000000.0;
+    values[i] = elem;
+    m_A_C[i] = elem;
+    // printf("%lf\n", values[i]);
   }
+ 
 
-  m_A_values = values;
   m_pCopyHelper->UpdateBuffer(m_A, 0, values.data(), sizeof(float) * values.size());
   
 }
@@ -237,9 +246,9 @@ void SimpleCompute::Execute()
     std::cout << v << ' ';
   }
 
-  float avg = GPU_sum/values.size();
+  float avg = GPU_sum/((float)values.size());
   auto GPU_timer_end = std::chrono::high_resolution_clock::now();
-  std::cout << "GPU_sum = " << GPU_sum << "size:" << values.size() << "AVG:" << avg <<"\n";
+  std::cout << "GPU_sum = " << GPU_sum << " size: " << values.size() << " AVG: " << avg <<"\n";
   std::cout << "GPU_time = " << std::chrono::duration<float, std::micro>{GPU_timer_end - GPU_timer_start}.count() << '\n';
 
 
@@ -252,7 +261,7 @@ void SimpleCompute::Execute()
     {
       if (i + j >= 0 && i + j < m_A_C.size())
       {
-        s+=m_A_C[i+j];
+        s += m_A_C[i+j];
       }
     }
     m_B_C[i] = m_A_C[i] - s / 7;
@@ -262,9 +271,9 @@ void SimpleCompute::Execute()
   {
     CPU_sum += val;
   }
-  avg = CPU_sum/values.size();
+  avg = CPU_sum/((float)values.size());
   auto CPU_timer_end = std::chrono::high_resolution_clock::now();
-  std::cout << "CPU_sum = " << CPU_sum << "size:" << values.size() << "AVG:" << avg <<"\n";
+  std::cout << "CPU_sum = " << CPU_sum << " size: " << values.size() << " AVG: " << avg <<"\n";
   std::cout << "CPU_time = " << std::chrono::duration<float, std::micro>{CPU_timer_end - CPU_timer_start}.count() << '\n';
 
 }
