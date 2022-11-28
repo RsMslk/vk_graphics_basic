@@ -31,19 +31,22 @@ layout (location = 0 ) out VS_OUT
 
 out gl_PerVertex { vec4 gl_Position; };
 
-mat3 Rotational_Matrix(vec3 angle) {
-    mat3 r_x = mat3(
-        1, 0, 0,
-        0, cos(angle.x), -sin(angle.x),
-        0, sin(angle.x), cos(angle.x));
-    mat3 r_y = mat3(
-        cos(angle.y), 0, sin(angle.y),
-        0, 1, 0,
-        -sin(angle.y), 0, cos(angle.y));
-    mat3 r_z = mat3(
-        cos(angle.z), -sin(angle.z), 0,
-        sin(angle.z), cos(angle.z), 0,
-        0, 0, 1);
+mat4 Rotational_Matrix(vec3 angle) {
+    mat4 r_x = mat4(
+        1, 0, 0, 0,
+        0, cos(angle.x), -sin(angle.x), 0,
+        0, sin(angle.x), cos(angle.x), 0,
+        0, 0, 0, 1);
+    mat4 r_y = mat4(
+        cos(angle.y), 0, sin(angle.y), 0,
+        0, 1, 0, 0,
+        -sin(angle.y), 0, cos(angle.y), 0,
+        0, 0, 0, 1);
+    mat4 r_z = mat4(
+        cos(angle.z), -sin(angle.z), 0, 0,
+        sin(angle.z), cos(angle.z), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1);
     
     return r_x * r_y * r_z;   
 }
@@ -54,11 +57,11 @@ void main(void)
     const vec4 wNorm = vec4(DecodeNormal(floatBitsToInt(vPosNorm.w)),         0.0f);
     const vec4 wTang = vec4(DecodeNormal(floatBitsToInt(vTexCoordAndTang.z)), 0.0f);
 
-    const vec3 Rotation_angle = vec3(0.01 * Params.Time);
+    vec3 Rotation_angle = vec3(0.01 * Params.time, 0.01 * Params.time, 0.01 * Params.time);
 
-    const mat3 Rotational_matrix = Rotational_Matrix(Roatationl_angle);
+    mat4 Rotational_matrix = Rotational_Matrix(Rotation_angle);
 
-    mat3 mModel = params.mModel;
+    mat4 mModel = params.mModel;
 
     mModel *= Rotational_matrix;
 
