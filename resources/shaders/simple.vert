@@ -57,7 +57,7 @@ void main(void)
     const vec4 wNorm = vec4(DecodeNormal(floatBitsToInt(vPosNorm.w)),         0.0f);
     const vec4 wTang = vec4(DecodeNormal(floatBitsToInt(vTexCoordAndTang.z)), 0.0f);
 
-    vec3 Rotation_angle = vec3(0.01 * Params.time, 0.01 * Params.time, 0.01 * Params.time);
+    vec3 Rotation_angle = vec3(sin(0.01 * Params.time), sin(0.01 * Params.time), sin(0.01 * Params.time));
 
     mat4 Rotational_matrix = Rotational_Matrix(Rotation_angle);
 
@@ -65,7 +65,7 @@ void main(void)
 
     mModel *= Rotational_matrix;
 
-    vOut.wPos     = (params.mModel * vec4(vPosNorm.xyz, 1.0f)).xyz;
+    vOut.wPos     = (mModel * vec4(vPosNorm.xyz, 1.0f)).xyz;
     vOut.wNorm    = normalize(mat3(transpose(inverse(params.mModel))) * wNorm.xyz);
     vOut.wTangent = normalize(mat3(transpose(inverse(params.mModel))) * wTang.xyz);
     vOut.texCoord = vTexCoordAndTang.xy;
