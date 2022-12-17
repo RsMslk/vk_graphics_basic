@@ -47,24 +47,38 @@ vec3 GetNormal() {
    return normalize(cross(a, b));
 }
 
-vec4 Animate(vec4 position, vec3 normal)
+vec3 Animate(vec3 position, vec3 normal)
 {
-    
-    float magnitude = exp(-0.2*Params.time) * abs(sin(Params.time));
-    vec3 direction = normal  *  magnitude;
-    return position + vec4(direction, 0.0);
+    float time1;
+    if ((transpose(params.mModel) ==  mat4(0.999889,  0.0, -0.0149171, 0.0, 0.0, 1.0, 0.0,-1.27, 0.0149171, 0.0, 0.999889, 0.0, 0.0, 0.0, 0.0, 1.0)
+    || transpose(params.mModel) == mat4(1.0, 0.0, 0.0, 0.985493, 0.0, 1.0, 0.0, -1.27, 0.0, 0.0, 1.0, 0.512028, 0.0, 0.0, 0.0, 1.0)
+    ))
+    {
+        float magnitude = abs(sin(0.15*Params.time)) * 2.25 * abs(sin(Params.time));;
+        vec3 direction = normal  *  magnitude;
+        time1 = Params.time;
+        return position + direction;
+    }
+    return position;
 } 
 
 void main(void)
 {
     vec3 normal = GetNormal();
-    gl_Position = params.mProjView * Animate(vec4(gs_in[0].wPos, 1.0f), GetNormal());
-    EmitVertex();
 
-    gl_Position = params.mProjView * Animate(vec4(gs_in[1].wPos, 1.0f), GetNormal());
+    gs_out.wPos = Animate(gs_in[0].wPos, normal);
+    gl_Position = params.mProjView * vec4(gs_out.wPos, 1.0);
+    gs_out.wNorm    = normalize(mat3(params.mModel) * gs_in[0].wNorm.xyz);
     EmitVertex();
-
-    gl_Position = params.mProjView * Animate(vec4(gs_in[2].wPos, 1.0f), GetNormal());
+    
+    gs_out.wPos = Animate(gs_in[1].wPos, normal);
+    gl_Position = params.mProjView * vec4(gs_out.wPos, 1.0);
+    gs_out.wNorm    = normalize(mat3(params.mModel) * gs_in[1].wNorm.xyz);
+    EmitVertex();
+    
+    gs_out.wPos = Animate(gs_in[2].wPos, normal);
+    gl_Position = params.mProjView * vec4(gs_out.wPos, 1.0);
+    gs_out.wNorm    = normalize(mat3(params.mModel) * gs_in[2].wNorm.xyz);
     EmitVertex();
 
     EndPrimitive();

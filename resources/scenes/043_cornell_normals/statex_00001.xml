@@ -59,7 +59,7 @@
   <material id="1" name="grayOverrideMat" type="hydra_material">
     <diffuse brdf_type="lambert">
       <color val="0.5 0.5 0.5" />
-    </diffuse>
+    </diffuse>s 
   </material>
   <material id="2" name="hydra_placeholder_material" type="hydra_material">
     <diffuse brdf_type="lambert">
