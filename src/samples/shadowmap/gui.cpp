@@ -8,7 +8,7 @@ void SimpleShadowmapRender::SetupGUIElements()
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
   {
-//    ImGui::ShowDemoWindow();
+    //    ImGui::ShowDemoWindow();
     ImGui::Begin("Simple render settings");
 
     ImGui::ColorEdit3("Meshes base color", m_uniforms.baseColor.M, ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_NoInputs);
@@ -16,9 +16,12 @@ void SimpleShadowmapRender::SetupGUIElements()
 
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
+    const char *shadowVars[] = { "Basic", "VSM" };
+    ImGui::Combo("Shadow mapping method", (int *)&m_currentShadowMethod, shadowVars, IM_ARRAYSIZE(shadowVars));
+
     ImGui::NewLine();
 
-    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f),"Press 'B' to recompile and reload shaders");
+    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Press 'B' to recompile and reload shaders");
     ImGui::End();
   }
 
