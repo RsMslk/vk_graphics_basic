@@ -24,31 +24,41 @@ using shader_mat4  = LiteMath::float4x4;
 // The funny thing is, on a GPU, you might as well consider
 // a single byte to be 32 bits, because nothing can be smaller
 // than 32 bits, so a bool has to be 32 bits as well.
-using shader_bool  = LiteMath::uint;
+using shader_bool = LiteMath::uint;
 
 #else
 
-#define shader_uint  uint
+#define shader_uint uint
 #define shader_uvec2 uvec2
 
 #define shader_float float
-#define shader_vec2  vec2
-#define shader_vec3  vec3
-#define shader_vec4  vec4
-#define shader_mat4  mat4
+#define shader_vec2 vec2
+#define shader_vec3 vec3
+#define shader_vec4 vec4
+#define shader_mat4 mat4
 
-#define shader_bool  bool
+#define shader_bool bool
 
 #endif
 
 
 struct UniformParams
 {
-  shader_mat4  lightMatrix;
-  shader_vec3  lightPos;
+  shader_mat4 lightMatrix;
+  shader_mat4 lightView;
+  shader_mat4 view;
+  shader_mat4 viewInverse;
+  shader_mat4 proj;
+  shader_vec3 lightPos;
   shader_float time;
-  shader_vec3  baseColor;
-  shader_bool  animateLightColor;
+  shader_vec3 baseColor;
+  shader_bool animateLightColor;
+  shader_uint ssaoNoiseSize;
+  shader_uint ssaoSampleSize;
+  shader_float ssaoRadius;
+  shader_uint width;
+  shader_uint height;
+  shader_bool sssEnabled;
 };
 
-#endif // VK_GRAPHICS_BASIC_COMMON_H
+#endif// VK_GRAPHICS_BASIC_COMMON_H
